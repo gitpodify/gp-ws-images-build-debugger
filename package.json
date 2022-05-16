@@ -1,0 +1,7 @@
+{
+  "name": "@gitpodify/gp-ws-images-build-debugger",
+  "packageManager": "yarn@3.2.1",
+  "scripts": {
+    "debugger:ssh": "ssh gp-ws-images-bulldozer"
+  }
+}
