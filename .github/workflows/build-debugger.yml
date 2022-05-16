@@ -10,29 +10,30 @@ on:
 
 jobs:
   debugger:
+    name: bulldozer-debugger.gitpodify.dev
     runs-on: ubuntu-22.04 # Update this value a month after new LTS release.
     steps:
-      - name: Tailscale setup
-        run: |
-          curl -fsSL https://tailscale.com/install.sh | sh
-          sudo systemctl start tailscaled || true
-          tailscale up --authkey=${{ secrets.TAILSCALE_AUTHKEY_BULLDOZER }} --hostname gp-ws-images-bulldozer-gha --advertise-tags="tag:dev,tag:ci"
       - name: Install Doppler CLI
         uses: dopplerhq/cli-action@v1
       - name: Load environment variables as masked secrets
         uses: catchco/doppler-environment-loader@v1.0.2
         with:
           doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+      - name: Tailscale setup
+        run: |
+          curl -fsSL https://tailscale.com/install.sh | sh
+          sudo systemctl start tailscaled || true
+          sudo tailscale up --authkey=${{ secrets.TAILSCALE_AUTHKEY_BULLDOZER }} --hostname gp-ws-images-bulldozer-gha --advertise-tags="tag:dev,tag:ci"
+      
       - name: Checkout from gitpodify/gitpodified-workspace-images
         uses: actions/checkout@v3
         with:
           repository: gitpodify/gitpodified-workspace-images
           ref: ${{ inputs.branch }}
           path: gp-ws-images
-      - name: Setup server
+      - name: SSH Server Warmup
         run: |
           sudo apt install -yq openssh-server
-          sudo mkdir -p /var/log/sshd
 
           if [[ "${RUNNER_OS}" == 'Linux' ]]; then
             chmod 0770 "${HOME}"
