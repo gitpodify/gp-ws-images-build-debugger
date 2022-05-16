@@ -11,7 +11,7 @@ on:
 jobs:
   debugger:
     name: bulldozer-debugger.gitpodify.dev
-    runs-on: ubuntu-22.04 # Update this value a month after new LTS release.
+    runs-on: ubuntu-latest
     steps:
       - name: Install Doppler CLI
         uses: dopplerhq/cli-action@v1
@@ -107,6 +107,7 @@ jobs:
       - name: 📦 Setup local registry
         run: |
           docker run -it --detach --publish 5000:5000 --volume ~/registry:/var/lib/registry registry:2
+        continue-on-error: true
 
       - name: 🔨 dazzle-buildkit.pipelines.recaptime.dev
         run: |
@@ -126,6 +127,8 @@ jobs:
 
           echo "===> Authenticating against Cloudsmith"
           sudo skopeo login -u recaptimebot --password=${{secrets.CLOUDSMITH_API_KEY}} https://docker.cloudsmith.io
+        continue-on-error: true
+
       - name: Standby mode
         continue-on-error: true
         run: |
